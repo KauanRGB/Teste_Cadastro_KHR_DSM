@@ -1,0 +1,141 @@
+<?php
+$mensagem = "";
+
+// Verifica se o formulário foi enviado via POST
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $nome = trim($_POST['nome'] ?? '');
+    $email = trim($_POST['email'] ?? '');
+    $senha = $_POST['senha'] ?? '';
+
+    // Validação simples
+    if (!empty($nome) && !empty($email) && !empty($senha)) {
+        // Criptografando a senha para segurança
+        $senhaSegura = password_hash($senha, PASSWORD_DEFAULT);
+
+        /* 
+          EXEMPLO DE CONEXÃO COM BANCO DE DADOS (MySQL via PDO)
+          Descomente as linhas abaixo caso queira salvar no banco real:
+          
+          try {
+              $pdo = new PDO("mysql:host=localhost;dbname=seu_banco", "usuario", "senha");
+              $stmt = $pdo->prepare("INSERT INTO usuarios (nome, email, senha) VALUES (?, ?, ?)");
+              $stmt->execute([$nome, $email, $senhaSegura]);
+              $mensagem = "Usuário cadastrado com sucesso!";
+          } catch (PDOException $e) {
+              $mensagem = "Erro ao cadastrar: " . $e->getMessage();
+          }
+        */
+
+        // Mensagem simulada de sucesso (caso esteja testando sem banco)
+        $mensagem = "Cadastro realizado com sucesso para **" . htmlspecialchars($nome) . "**!";
+    } else {
+        $mensagem = "Por favor, preencha todos os campos.";
+    }
+}
+?>
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Usuários</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            background-color: #f4f6f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .card {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-size: 14px;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        input:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            border: none;
+            color: white;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .msg {
+            margin-top: 15px;
+            text-align: center;
+            font-size: 14px;
+            color: #28a745;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>Criar Conta</h2>
+        <form method="POST" action="">
+            <div class="input-group">
+                <label for="nome">Nome Completo</label>
+                <input type="text" id="nome" name="nome" required>
+            </div>
+            
+            <div class="input-group">
+                <label for="email">E-mail</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            
+            <div class="input-group">
+                <label for="senha">Senha</label>
+                <input type="password" id="senha" name="senha" required>
+            </div>
+            
+            <button type="submit">Cadastrar</button>
+        </form>
+
+        <?php if (!empty($mensagem)): ?>
+            <div class="msg"><?php echo $mensagem; ?></div>
+        <?php endif; ?>
+    </div>
+
+</body>
+</html>
